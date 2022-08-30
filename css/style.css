@@ -34,7 +34,7 @@ body {
 
 .content {
   background-color: aqua; /*УДАЛИТЬ!*/
-  display: inline;
+  display: flex;
   margin: 15px 0;
 }
 
