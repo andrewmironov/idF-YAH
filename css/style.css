@@ -1,3 +1,4 @@
+/*----------Main styles bock-----------------------------------------------------------*/
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,6 +14,7 @@ body {
   color: white;
 }
 
+/*----------Header---------------------------------------------------------------------*/
 .header {
   display: flex;
   justify-content: space-between;
@@ -54,12 +56,14 @@ body {
   opacity: 0.5;
 }
 
+/*----------Content--------------------------------------------------------------------*/
 .content {
   display: flex;
   padding: 15px 0;
   justify-content: space-between;
 }
 
+/*----------Index----------------------------------------------------------------------*/
 .content-index {
   background-color: #fff;
   color: #000;
@@ -69,6 +73,35 @@ body {
   border-radius: 15px;
 }
 
+.content-index__header {
+  font-size: 18px;
+  padding: 0 0 5px 20px;
+}
+
+.content-index__list-block {
+  list-style-position: outside;
+  padding: 0 0 0 20px;
+}
+
+.content-index__list-point {
+  font-size: 18px;
+}
+
+.content-index__list-point-link {
+  color: #000;
+  text-decoration: none;
+}
+
+.content-index__list-point-link:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+.selected {
+  font-weight: bold;
+}
+
+/*----------Data-----------------------------------------------------------------------*/
 .content-data {
   background-color: #fff;
   color: #000;
@@ -78,6 +111,7 @@ body {
   padding: 15px;
 }
 
+/*----------Footer---------------------------------------------------------------------*/
 .footer {
   display: block;
 }
@@ -93,9 +127,11 @@ body {
 }
 
 .footer__link:hover {
+  color: #ddd;
   text-decoration: underline;
 }
 
+/*----------Mobile classes-------------------------------------------------------------*/
 @media (max-width: 999px) {
   body {
     min-width: 400px;
