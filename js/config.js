@@ -1,4 +1,5 @@
-export  const config = {
+//Application configuration--------------------------------------------------------------
+export const config = {
     interface : {
         title : "idF-YAH", //Header and title of app
         subtitle : "ideas Factory - yet another help", //Subtytle for app

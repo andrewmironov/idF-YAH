@@ -1,33 +1,28 @@
+//Main js file of idM-YAH----------------------------------------------------------------
+
 //Import configs and index---------------------------------------------------------------
 import {config} from './config.js';
 import {index} from './index.js';
+import {getHTMLfromMarkdown} from './parser.js';
 
-//Connecting html vs js and applying configuration data----------------------------------
-let title = document.querySelector('title');
-let headerTitle = document.querySelector('.header-logo__title');
-let headerSubtytle = document.querySelector('.header-logo__subtitle');
-let menuButton = document.querySelector('.header-menu__button');
-let contentIndex = document.querySelector('.content-index');
-let contentData = document.querySelector('.content-data');
-
-//Core functions-------------------------------------------------------------------------
+//App functions-------------------------------------------------------------------------
 
 //Open index
-function openIndex() {
+export function openIndex() {
     contentIndex.style.display = 'block';
     menuButton.textContent = config.interface.index_open;
     setCookie('index_state', 'open', {secure: true, 'max-age': 3600});
 }
 
 //Close index
-function closeIndex() {
+export function closeIndex() {
     contentIndex.style.display = 'none';
     menuButton.textContent = config.interface.index_close;
     setCookie('index_state', 'close', {secure: true, 'max-age': 3600});
 }
 
 //Index point generator
-function getIndexPoint(point_obj) {
+export function getIndexPoint(point_obj) {
     let point = document.createElement('li');
     point.className = 'content-index__list-point';
     let link = document.createElement('a');
@@ -47,7 +42,7 @@ function getIndexPoint(point_obj) {
 }
 
 //Index block generator, params - html target object, data for generation object
-function getIndexBlock(block_target, block_obj) {
+export function getIndexBlock(block_target, block_obj) {
     //Block name generation
     if (block_target.tagName == 'UL') {
         let header_point = document.createElement('li');
@@ -71,14 +66,14 @@ function getIndexBlock(block_target, block_obj) {
         } else if (block_obj.content[i].type == 'block') {
             getIndexBlock(block, block_obj.content[i]);
         } else {
-            console.log('Error: type of object in index is incorrect - ' + block_obj.content[i].type);
+            console.log(`Error: type of object in index is incorrect: ${block_obj.content[i].type}`);
         }
     }
     block_target.append(block);
 }
 
 //Get cookie by name
-function getCookie(name) {
+export function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
       "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
@@ -88,7 +83,7 @@ function getCookie(name) {
 //Set cookie
 //  Example:
 //  setCookie('user', 'John', {secure: true, 'max-age': 3600});
-function setCookie(name, value, options = {}) {
+export function setCookie(name, value, options = {}) {
     //It's default parameters
     options = {
         path: '/',
@@ -106,6 +101,35 @@ function setCookie(name, value, options = {}) {
     }
     document.cookie = updatedCookie;
 }
+
+//Content block generator, params - html target object, path for load data from file
+export function getContentBlock(html_target, file) {
+    let fileRequest = new XMLHttpRequest();
+    
+    fileRequest.open("GET", file);
+    fileRequest.send();
+
+    fileRequest.onload = function() {
+        
+        if (fileRequest.status != 200) { 
+            console.log(`Error: md file loading is failed - ${fileRequest.status}: ${fileRequest.statusText}`);
+        } else {
+            html_target.insertAdjacentHTML('afterbegin', getHTMLfromMarkdown(fileRequest.response));
+        }
+    }
+
+    fileRequest.onerror = function() {
+        console.log(`Error: md file loading is failed`);
+    }
+}
+
+//Connecting html vs js and applying configuration data----------------------------------
+let title = document.querySelector('title');
+let headerTitle = document.querySelector('.header-logo__title');
+let headerSubtytle = document.querySelector('.header-logo__subtitle');
+let menuButton = document.querySelector('.header-menu__button');
+let contentIndex = document.querySelector('.content-index');
+let contentData = document.querySelector('.content-data');
 
 //Events and handlers--------------------------------------------------------------------
 
@@ -142,8 +166,8 @@ document.addEventListener("DOMContentLoaded", function() {
     getIndexBlock(contentIndex, index);
     
     //Load content
-    contentData.textContent = config.appvar.current_page;
-        
+    contentData.textContent = '';
+    getContentBlock(contentData, '../content/'+config.appvar.current_page);
 })
 
 //Processing the click of the button with the index

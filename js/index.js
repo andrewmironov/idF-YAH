@@ -1,4 +1,5 @@
-export  const index = {
+//Table of contents configuration--------------------------------------------------------
+export const index = {
     index : "index.md",
     type : "block",
     name : "Главная",
