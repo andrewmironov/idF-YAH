@@ -52,7 +52,19 @@ export function getIndexBlock(block_target, block_obj) {
     } else {
         let header = document.createElement('h1');
         header.className = 'content-index__header';
-        header.textContent = block_obj.name;
+        let link = document.createElement('a');
+        link.className = 'content-index__header-link';
+        let url = new URL(document.URL);
+        url.searchParams.delete('current_page');
+        url.searchParams.append('current_page', block_obj.index);
+        link.href = url.href;
+        link.textContent = block_obj.name;
+        header.append(link);
+
+        //Selection of the header when it's selected
+        if(block_obj.index == config.appvar.current_page) { 
+            header.className = header.className + ' selected';
+        }
         block_target.append(header);
     }
     
