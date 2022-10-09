@@ -8,21 +8,21 @@ import {getHTMLfromMarkdown} from './parser.js';
 //App functions-------------------------------------------------------------------------
 
 //Open index
-export function openIndex() {
+function openIndex() {
     contentIndex.style.display = 'block';
     menuButton.textContent = config.interface.index_open;
     setCookie('index_state', 'open', {secure: true, 'max-age': 3600});
 }
 
 //Close index
-export function closeIndex() {
+function closeIndex() {
     contentIndex.style.display = 'none';
     menuButton.textContent = config.interface.index_close;
     setCookie('index_state', 'close', {secure: true, 'max-age': 3600});
 }
 
 //Index point generator
-export function getIndexPoint(point_obj) {
+function getIndexPoint(point_obj) {
     let point = document.createElement('li');
     point.className = 'content-index__list-point';
     let link = document.createElement('a');
@@ -42,7 +42,7 @@ export function getIndexPoint(point_obj) {
 }
 
 //Index block generator, params - html target object, data for generation object
-export function getIndexBlock(block_target, block_obj) {
+function getIndexBlock(block_target, block_obj) {
     //Block name generation
     if (block_target.tagName == 'UL') {
         let header_point = document.createElement('li');
@@ -85,7 +85,7 @@ export function getIndexBlock(block_target, block_obj) {
 }
 
 //Get cookie by name
-export function getCookie(name) {
+function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
       "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
@@ -95,7 +95,7 @@ export function getCookie(name) {
 //Set cookie
 //  Example:
 //  setCookie('user', 'John', {secure: true, 'max-age': 3600});
-export function setCookie(name, value, options = {}) {
+function setCookie(name, value, options = {}) {
     //It's default parameters
     options = {
         path: '/',
@@ -115,7 +115,7 @@ export function setCookie(name, value, options = {}) {
 }
 
 //Content block generator, params - html target object, path for load data from file
-export function getContentBlock(html_target, file) {
+function getContentBlock(html_target, file) {
     let fileRequest = new XMLHttpRequest();
     
     fileRequest.open("GET", file);
@@ -134,6 +134,37 @@ export function getContentBlock(html_target, file) {
         console.log(`Error: md file loading is failed`);
     }
 }
+
+//How top check name of the current page and find it
+function checkCurrentPage(nodeList) {
+    let result = ''
+    for (let i in nodeList) {
+        if (nodeList[i].type == "point") {
+            if (config.appvar.current_page == nodeList[i].path) {
+                result = nodeList[i].name;
+                break;
+            } else {
+                continue;
+            }
+        } else if (nodeList[i].type == "block") {
+            result = checkCurrentPage(nodeList.content);
+        } else {
+            console.log(`Error with structure of content, type of block is ${nodeList[i].type}`);
+            result = `Error with structure of content, type of block is ${nodeList[i].type}`;
+            break;
+        }
+    }
+    return result;
+}
+
+function findCurrentPage () { 
+    if (config.appvar.current_page == index.index) {
+        return index.name;
+    } else {
+        return checkCurrentPage(index.content);
+    }
+}
+
 
 //Connecting html vs js and applying configuration data----------------------------------
 let title = document.querySelector('title');
@@ -161,8 +192,11 @@ document.addEventListener("DOMContentLoaded", function() {
         config.appvar.index_state = getCookie('index_state');
     }
 
+    //Find name of current page
+    console.log(`Current page is - ${findCurrentPage(index, config.appvar.current_page)}`)
+    title.textContent = `${config.interface.title} :: ${findCurrentPage(index, config.appvar.current_page)}`;
+    
     //Load interface
-    title.textContent = config.interface.title;
     headerTitle.textContent = config.interface.title;
     headerSubtytle.textContent = config.interface.subtitle;
 
